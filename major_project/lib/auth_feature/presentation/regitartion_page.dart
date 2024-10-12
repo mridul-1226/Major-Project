@@ -28,6 +28,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final TextEditingController _parentPhoneController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _registrationNumberController =
+      TextEditingController();
 
   int _currentPage = 0;
   String? _selectedBranch;
@@ -87,9 +89,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         });
                       },
                       children: [
-                        _buildPage(0),
-                        _buildPage(1),
-                        _buildPage(2),
+                        _buildPage(0, 'form1'),
+                        _buildPage(1, 'form2'),
+                        _buildPage(2, 'form3'),
                       ],
                     ),
                   ),
@@ -114,9 +116,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         if (_currentPage < 2)
                           ElevatedButton(
                             onPressed: () {
-                              if (_formKeys[_currentPage]
-                                  .currentState!
-                                  .validate()) {
+                              // Ensure the form key is not null before validating
+                              if (_formKeys[_currentPage].currentState !=
+                                      null &&
+                                  _formKeys[_currentPage]!
+                                      .currentState!
+                                      .validate()) {
                                 _pageController.nextPage(
                                   duration: const Duration(milliseconds: 300),
                                   curve: Curves.easeInOut,
@@ -131,8 +136,16 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         if (_currentPage == 2)
                           ElevatedButton(
                             onPressed: () {
-                              if (_formKeys.every(
-                                  (key) => key.currentState!.validate())) {
+                              bool allValid = true;
+                              // Validate each form only if it's mounted and non-null
+                              for (int i = 0; i < _formKeys.length; i++) {
+                                if (_formKeys[i].currentState != null &&
+                                    !_formKeys[i].currentState!.validate()) {
+                                  allValid = false;
+                                  break;
+                                }
+                              }
+                              if (allValid) {
                                 // TODO: Implement registration logic
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
@@ -157,32 +170,39 @@ class _RegistrationPageState extends State<RegistrationPage> {
     );
   }
 
-  Widget _buildPage(int pageIndex) {
+  Widget _buildPage(int pageIndex, String formKey) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKeys[pageIndex],
           child: Column(
+            key: PageStorageKey(formKey),
             children: [
               if (pageIndex == 0) ...[
                 _buildInputField('Name', _nameController),
-                _buildInputField('Email', _emailController, TextInputType.emailAddress),
-                _buildInputField('Mobile Number', _phoneController, TextInputType.phone),
+                _buildInputField(
+                    'Email', _emailController, TextInputType.emailAddress),
+                _buildInputField(
+                    'Mobile Number', _phoneController, TextInputType.phone),
                 _buildDropdownField(
                     'Gender', _genders, (value) => _selectedGender = value),
               ],
               if (pageIndex == 1) ...[
-                _buildInputField("Parent's Name", _parentNameController),
-                _buildInputField("Parent's Mobile Number", _parentPhoneController, TextInputType.phone),
+                _buildInputField('Registration No / AKTU Roll No',
+                    _registrationNumberController, TextInputType.number),
+                _buildDropdownField('Year of Joining College', _getYears(),
+                    (value) => _selectedJoiningYear = value),
+                _buildDropdownField(
+                    'Branch', _branches, (value) => _selectedBranch = value),
                 _buildDateField(),
               ],
               if (pageIndex == 2) ...[
-                _buildDropdownField(
-                    'Year of Joining College', _getYears(), (value) => _selectedJoiningYear = value),
-                _buildDropdownField(
-                    'Branch', _branches, (value) => _selectedBranch = value),
-                _buildInputField('Address', _addressController, TextInputType.multiline, 3),
+                _buildInputField("Parent's Name", _parentNameController),
+                _buildInputField("Parent's Mobile Number",
+                    _parentPhoneController, TextInputType.phone),
+                _buildInputField(
+                    'Address', _addressController, TextInputType.multiline, 3),
               ],
             ],
           ),
@@ -212,8 +232,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
               if (value == null || value.isEmpty) {
                 return 'Please enter $label';
               }
-              if (label == 'Email' && !RegExp(r"^[a-zA-Z0-9]+@[a-zA-Z]+\.[a-zA-Z]+").hasMatch(value)) {
+              if (label == 'Email' &&
+                  !RegExp(r"^[a-zA-Z0-9]+@[a-zA-Z]+\.[a-zA-Z]+")
+                      .hasMatch(value)) {
                 return 'Please enter a valid email address';
+              }
+              if (label == 'Registration No / AKTU Roll No' &&
+                  value.length != 10) {
+                return 'Please enter a valid 10-digit registration number';
               }
               return null;
             },
@@ -241,7 +267,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             onTap: () async {
               DateTime? pickedDate = await showDatePicker(
                 context: context,
-                initialDate: DateTime.now(),
+                initialDate: DateTime(2000),
                 firstDate: DateTime(1900),
                 lastDate: DateTime.now(),
               );
@@ -255,7 +281,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             },
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your date of birth';
+                return 'Please select Date of Birth';
               }
               return null;
             },
@@ -266,7 +292,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 
   Widget _buildDropdownField(
-      String label, List<String> items, Function(String?) onChanged) {
+      String label, List<String> items, ValueChanged<String?> onChanged) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Card(
