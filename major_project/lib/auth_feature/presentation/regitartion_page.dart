@@ -22,19 +22,28 @@ class _RegistrationPageState extends State<RegistrationPage> {
     GlobalKey<FormState>(),
   ];
   final TextEditingController _dateController = TextEditingController();
-    final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _parentNameController = TextEditingController();
   final TextEditingController _parentPhoneController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
-  final TextEditingController _joiningYearController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
 
   int _currentPage = 0;
   String? _selectedBranch;
   String? _selectedGender;
+  String? _selectedJoiningYear;
 
   final List<String> _branches = ['CSE', 'EE', 'EL', 'Mining'];
   final List<String> _genders = ['Male', 'Female', 'Other'];
+
+  // Dynamically generate years from 2015 to the present year
+  List<String> _getYears() {
+    int currentYear = DateTime.now().year;
+    return List<String>.generate(currentYear - 2015 + 1, (index) {
+      return (2015 + index).toString();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,6 +167,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             children: [
               if (pageIndex == 0) ...[
                 _buildInputField('Name', _nameController),
+                _buildInputField('Email', _emailController, TextInputType.emailAddress),
                 _buildInputField('Mobile Number', _phoneController, TextInputType.phone),
                 _buildDropdownField(
                     'Gender', _genders, (value) => _selectedGender = value),
@@ -168,8 +178,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 _buildDateField(),
               ],
               if (pageIndex == 2) ...[
-                _buildInputField(
-                    'Year of Joining College', _joiningYearController, TextInputType.number),
+                _buildDropdownField(
+                    'Year of Joining College', _getYears(), (value) => _selectedJoiningYear = value),
                 _buildDropdownField(
                     'Branch', _branches, (value) => _selectedBranch = value),
                 _buildInputField('Address', _addressController, TextInputType.multiline, 3),
@@ -201,6 +211,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter $label';
+              }
+              if (label == 'Email' && !RegExp(r"^[a-zA-Z0-9]+@[a-zA-Z]+\.[a-zA-Z]+").hasMatch(value)) {
+                return 'Please enter a valid email address';
               }
               return null;
             },
@@ -266,16 +279,16 @@ class _RegistrationPageState extends State<RegistrationPage> {
               labelText: label,
               border: InputBorder.none,
             ),
-            items: items.map((String value) {
+            items: items.map((item) {
               return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
+                value: item,
+                child: Text(item),
               );
             }).toList(),
             onChanged: onChanged,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please select a $label';
+                return 'Please select $label';
               }
               return null;
             },
