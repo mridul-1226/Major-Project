@@ -238,8 +238,16 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 return 'Please enter a valid email address';
               }
               if (label == 'Registration No / AKTU Roll No' &&
+                  value.length != 13) {
+                return 'Please enter a valid 13-digit registration number';
+              }
+              if (label == 'Mobile Number' &&
                   value.length != 10) {
-                return 'Please enter a valid 10-digit registration number';
+                return 'Please enter a valid 10-digit mobile number';
+              }
+              if (label == "Parent's Mobile Number" &&
+                  value.length != 10) {
+                return 'Please enter a valid 10-digit mobile number';
               }
               return null;
             },
