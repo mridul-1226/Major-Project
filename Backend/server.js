@@ -1,6 +1,8 @@
-import express from 'express'
-import dotenv from 'dotenv'
 import cors from 'cors'
+import dotenv from 'dotenv'
+import express from 'express'
+import { connectDb } from './Db/db.js'
+import userRouter from './routes/user.route.js'
 
 
 
@@ -8,24 +10,22 @@ import cors from 'cors'
 dotenv.config()
 
 
-const PORT = process.env.PORT || 3300
+const PORT = process.env.PORT|| 3300
 
 
 const app = express()
 
-
-app.get("/",(_,res)=>{
-    return res.status(200).json({
-        message:"I am coming from backend",
-        success:true
-    })
-})
+connectDb();
+app.get("/", (req, res) => {
+    return res.send("hello");
+  });
 
 app.use(express.json())
 app.use(cors())
+app.use("/api/v1/user",userRouter)
 
 
-app.listen(process.env.PORT ||3300,()=>{
+app.listen(process.env.PORT,()=>{
     console.log(`Server started on http://localhost:${3300 || process.env.PORT}`);
 
 })
