@@ -10,6 +10,10 @@ class UserRepository {
     required String password,
   }) async {
     try {
+      print('Sending Register Request to: ${ApiRoutes.registerRoute}');
+      print(
+          'Request Body: {"email": "$email", "registrationNumber": "$registrationNumber", "password": "***"}');
+
       final response = await http.post(
         Uri.parse(ApiRoutes.registerRoute),
         headers: {'Content-Type': 'application/json'},
@@ -19,6 +23,9 @@ class UserRepository {
           'password': password,
         }),
       );
+
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
 
       final responseData = jsonDecode(response.body);
 
@@ -35,24 +42,32 @@ class UserRepository {
         };
       }
     } catch (e) {
+      print('Error in registerUser: $e');
       return {'success': false, 'message': 'Connection error: ${e.toString()}'};
     }
   }
 
   // Login method
-  Future<Map<String, dynamic>> loginUser({
+  Future<Map<String, dynamic>> sendOtp({
     required String email,
-    required String password,
+    required String registrationNumber,
   }) async {
     try {
+      print('Sending OTP Request to: ${ApiRoutes.loginRoute}');
+      print(
+          'Request Body: {"email": "$email", "registrationNumber": "$registrationNumber"}');
+
       final response = await http.post(
         Uri.parse(ApiRoutes.loginRoute),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': email,
-          'password': password,
+          'registrationNumber': registrationNumber,
         }),
       );
+
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
 
       final responseData = jsonDecode(response.body);
 
@@ -60,16 +75,17 @@ class UserRepository {
         return {
           'success': true,
           'message': responseData['message'],
-          'data': responseData['data'],
-          'token': responseData['token']
+          'otp': responseData['otp'],
+          'preview': responseData['preview']
         };
       } else {
         return {
           'success': false,
-          'message': responseData['message'] ?? 'Login failed'
+          'message': responseData['message'] ?? 'Failed to send OTP'
         };
       }
     } catch (e) {
+      print('Error in sendOtp: $e');
       return {'success': false, 'message': 'Connection error: ${e.toString()}'};
     }
   }

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:get/get.dart';
 import '../repo/user_repo.dart';
 
@@ -11,25 +13,39 @@ class UserController extends GetxController {
   final Rx<String> token = ''.obs;
 
   // Login function
-  Future<bool> login(String email, String password) async {
+  Future<bool> sendOtp(String email, String registrationNumber) async {
     try {
+      print('UserController: Attempting to send OTP');
+      print('Email: $email, Registration: $registrationNumber');
+
       isLoading.value = true;
       errorMessage.value = '';
 
-      final response = await _userRepo.loginUser(
+      final response = await _userRepo.sendOtp(
         email: email,
-        password: password,
+        registrationNumber: registrationNumber,
       );
 
+      print('UserController: Got response from sendOtp');
+      print('Success: ${response['success']}');
+      print('Message: ${response['message']}');
+
       if (response['success']) {
-        userData.value = response['data'];
-        token.value = response['token'];
+        userData.value = {
+          'email': email,
+          'registrationNumber': registrationNumber,
+          'otp': response['otp'],
+          'preview': response['preview']
+        };
+        print('UserController: OTP sent successfully');
         return true;
       } else {
         errorMessage.value = response['message'];
+        print('UserController: Failed to send OTP - ${response['message']}');
         return false;
       }
     } catch (e) {
+      print('UserController: Error in sendOtp - $e');
       errorMessage.value = 'Something went wrong: ${e.toString()}';
       return false;
     } finally {

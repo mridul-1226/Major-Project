@@ -1,4 +1,8 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:major_project/controllers/user_controller.dart';
 import 'dart:math' as math;
 
 import 'package:major_project/student_dashboard.dart/presentation/screens/student_approval_screen.dart';
@@ -20,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen>
   final TextEditingController _otpController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final UserController userController = Get.put(UserController());
 
   @override
   void initState() {
@@ -58,10 +63,16 @@ class _LoginScreenState extends State<LoginScreen>
     });
   }
 
-  void _submitRegistration() {
+  Future<void> _submitRegistration() async {
+    print('I am called');
+    bool otpsend = await userController.sendOtp(
+        "princedubey8006@gmail.com", _registrationController.text);
+    print("otpsend $otpsend");
     setState(() {
-      _isOtpMode = true;
-      _animationController.forward(from: 0.0);
+      if (otpsend) {
+        _isOtpMode = true;
+        _animationController.forward(from: 0.0);
+      }
     });
   }
 
@@ -73,7 +84,6 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _submitOtp() {
-    
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('OTP Submitted')),
     );

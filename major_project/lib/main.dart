@@ -17,7 +17,8 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       title: 'Flutter Demo',
       // home: FeesScreen(),
-      home: StudentDashboardScreen(),
+      // home: StudentDashboardScreen(),
+      home: LoginScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
