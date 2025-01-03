@@ -3,3 +3,5 @@
 .fvm/
 
 id_rsa_personal
+
+id_rsa_personal.pub
