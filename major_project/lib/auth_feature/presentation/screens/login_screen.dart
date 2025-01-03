@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+import 'package:major_project/student_dashboard.dart/presentation/screens/student_approval_screen.dart';
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginPageState extends State<LoginPage>
+class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
   bool _isStudentMode = true;
   bool _isOtpMode = false;
@@ -71,9 +73,15 @@ class _LoginPageState extends State<LoginPage>
   }
 
   void _submitOtp() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('OTP Submitted')),
-    );
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const StudentApprovalScreen(),
+        ),
+        (_) => false);
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   const SnackBar(content: Text('OTP Submitted')),
+    // );
   }
 
   void _adminLogin() {
@@ -267,9 +275,7 @@ class _LoginPageState extends State<LoginPage>
                 ),
               ),
               child: Text(
-                _isStudentMode
-                    ? (_isOtpMode ? 'Submit OTP' : 'Get OTP')
-                    : 'Login',
+                _isStudentMode ? (_isOtpMode ? 'Submit' : 'Get OTP') : 'Submit',
                 style: const TextStyle(
                   fontSize: 18,
                   color: Color(0xFFFFFFFF),
