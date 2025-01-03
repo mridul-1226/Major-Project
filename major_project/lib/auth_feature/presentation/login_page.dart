@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+import 'package:get/get.dart';
+import 'package:major_project/controllers/user_controller.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -18,6 +21,7 @@ class _LoginPageState extends State<LoginPage>
   final TextEditingController _otpController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final UserController userController = Get.put(UserController());
 
   @override
   void initState() {
