@@ -186,7 +186,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class FeesScreen extends StatefulWidget {
-  const FeesScreen({Key? key}) : super(key: key);
+  const FeesScreen({super.key});
 
   @override
   State<FeesScreen> createState() => _FeesScreenState();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:major_project/student_dashboard.dart/presentation/screens/student_dashboard_screen.dart';
-import 'package:major_project/student_dashboard.dart/presentation/widgets/student_card.dart';
+import 'package:major_project/features/student_dashboard/presentation/screens/student_dashboard_screen.dart';
+import 'package:major_project/features/student_dashboard/presentation/widgets/student_card.dart';
 
 import '../widgets/registration_status_dialog.dart';
 

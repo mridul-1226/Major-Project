@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:major_project/controllers/user_controller.dart';
 import 'dart:math' as math;
 
-import 'package:major_project/student_dashboard.dart/presentation/screens/student_approval_screen.dart';
+import 'package:major_project/features/student_dashboard/presentation/screens/student_approval_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
